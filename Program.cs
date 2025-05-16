@@ -4,7 +4,8 @@ public class Program{
     static void Main()
         {
             int size;
-            
+            Stack<Move> undoStack = new();
+            Stack<Move> redoStack = new();
 
             Console.WriteLine("Do you want to load a saved game? (y/n):");
             string? choice = Console.ReadLine()?.Trim().ToLower();
@@ -84,7 +85,7 @@ public class Program{
                         {
                             Console.WriteLine( currentPlayer.Name + " it's your turn.");
                             Console.WriteLine("Available numbers: " + string.Join(", ", currentPlayer.AvailableNumbers));
-                            Console.WriteLine("Enter a number from your list, or type 'save' or 'help':");
+                            Console.WriteLine("Enter a number from your list, or type 'save' or 'help' or 'undo' or 'redo':");
                             string? input = Console.ReadLine();
 
                             if (input?.Trim().ToLower() == "save")
@@ -112,6 +113,52 @@ public class Program{
                                 break; 
                             }
 
+                            if (input?.Trim().ToLower() == "undo")
+                            {
+                                if (undoStack.Count > 0)
+                                {
+                                    Move lastMove = undoStack.Pop();
+                                    board.boardGrid[lastMove.Row, lastMove.Col] = null;
+
+                                    lastMove.Player.AvailableNumbers.Add(lastMove.Value);  // ⬅️ fix
+
+                                    redoStack.Push(lastMove);
+                                    currentPlayer = lastMove.Player;
+                                    Console.WriteLine("Last move undone.");
+                                    board.Display();
+
+                                }
+                                else
+                                {
+                                    Console.WriteLine("Nothing to undo.");
+                                }
+                                continue;
+                            }
+
+                            if (input == "redo")
+                            {
+                                if (redoStack.Count > 0)
+                                {
+                                    Move redoMove = redoStack.Pop();
+                                    board.boardGrid[redoMove.Row, redoMove.Col] = redoMove.Value;
+
+                                    redoMove.Player.RemoveNumber(redoMove.Value);  // ⬅️ fix
+
+                                    undoStack.Push(redoMove);
+                                    currentPlayer = (redoMove.Player == player1) ? player2 : player1;
+                                    Console.WriteLine("Move redone.");
+                                    board.Display();
+
+                                }
+                                else
+                                {
+                                    Console.WriteLine("Nothing to redo.");
+                                }
+                                continue;
+                            }
+
+                            
+
                             Console.WriteLine("Invalid input. Try again.");
                         }
 
@@ -119,6 +166,9 @@ public class Program{
                     }
 
                     bool placed = Game.PlaceNumber(board.boardGrid, row, col, chosen);
+                    undoStack.Push(new Move(row, col, chosen, currentPlayer));
+                    redoStack.Clear(); // Redo is reset after a new move
+
 
                     if (placed)
                     {
@@ -153,6 +203,22 @@ public class Program{
             
         }
 
+}
+
+public class Move
+{
+    public int Row { get; }
+    public int Col { get; }
+    public int Value { get; }
+    public Player Player { get; }
+
+    public Move(int row, int col, int value, Player player)
+    {
+        Row = row;
+        Col = col;
+        Value = value;
+        Player = player;
+    }
 }
 public class Game{
 
