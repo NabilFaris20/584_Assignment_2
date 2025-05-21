@@ -1,120 +1,106 @@
-namespace BoardGameFramework{
-    public class GameUtils{
+namespace BoardGameFramework
+{
+    public static class GameUtils
+    {
+        // ---------- NUMERICAL GAME UTILS ----------
 
-        public static bool PlaceNumber(int?[,] boardgrid, int row, int col, int value)
+        public static bool PlaceNumber(int?[,] grid, int row, int col, int value)
         {
-            if (row < 0 || row >= boardgrid.GetLength(0) || col < 0 || col >= boardgrid.GetLength(1)){
+            if (row < 0 || row >= grid.GetLength(0) || col < 0 || col >= grid.GetLength(1))
                 return false;
-            }
 
-            if (boardgrid[row, col] != null){
+            if (grid[row, col] != null)
                 return false;
-            }  
 
-            boardgrid[row, col] = value;
+            grid[row, col] = value;
             return true;
         }
 
-        public static bool CheckWin(int? [,] boardGrid, int boardsize)
+        public static bool CheckWin(int?[,] grid, int boardSize)
         {
-            int magicSum = boardsize * (boardsize * boardsize + 1) / 2;
+            int magicSum = boardSize * (boardSize * boardSize + 1) / 2;
 
-            for(int i = 0; i < boardsize; i++){
-
-                int sum = 0;
-                bool complete = true;
-
-                for(int j = 0; j < boardsize; j++){
-                    if(boardGrid[i,j] == null){
-                        complete = false;
-                        break;
-                    }
-                    int cellValue = boardGrid[i, j]!.Value;
-                    sum += cellValue;
-                }
-
-                if(complete && sum == magicSum){
-                    return true;
-                }
-            }
-
-            for(int j = 0; j < boardsize; j++){
-
-                int sum = 0;
-                bool complete = true;
-
-                for(int i = 0; i < boardsize; i++){
-                    if(boardGrid[i,j] == null){
-                        complete = false;
-                        break;
-                    }
-                    int cellValue = boardGrid[i, j]!.Value;
-                    sum += cellValue;
-                }
-
-                if(complete && sum == magicSum){
-                    return true;
-                }
-            }
-
-            //check fro diagonal
-            int diagSum1 = 0;
-            bool diagComplete = true;
-
-            for(int i = 0; i < boardsize; i++){
-                if(boardGrid[i, i] == null){
-                    diagComplete = false;
-                    break;
-                }
-                int cellValue = boardGrid[i, i]!.Value;
-                diagSum1 += cellValue;
-            }
-            if(diagComplete && diagSum1 == magicSum){
-                return true;
-            }
-
-            //check for other diagonal
-            int diagSum2 = 0;
-            bool diagComplete2 = true;
-
-            for(int i = 0; i < boardsize; i++){
-                if(boardGrid[i, i] == null){
-                    diagComplete2 = false;
-                    break;
-                }
-                int cellValue = boardGrid[i, i]!.Value;
-                diagSum2 += cellValue;
-            }
-            if(diagComplete2 && diagSum2 == magicSum){
-                return true;
-            }
-
-            return false;
-        }
-
-        public static bool isBoardFull(int?[,] boardGrid)
-        {
-            foreach (var cell in boardGrid)
+            for (int i = 0; i < boardSize; i++)
             {
-                if (cell == null){
-                    return false;
+                int rowSum = 0;
+                int colSum = 0;
+                bool rowComplete = true;
+                bool colComplete = true;
+
+                for (int j = 0; j < boardSize; j++)
+                {
+                    if (grid[i, j] == null)
+                        rowComplete = false;
+                    else
+                        rowSum += grid[i, j].Value;
+
+                    if (grid[j, i] == null)
+                        colComplete = false;
+                    else
+                        colSum += grid[j, i].Value;
                 }
+
+                if ((rowComplete && rowSum == magicSum) || (colComplete && colSum == magicSum))
+                    return true;
+            }
+
+            int diagSum1 = 0;
+            int diagSum2 = 0;
+            bool diag1Complete = true;
+            bool diag2Complete = true;
+
+            for (int i = 0; i < boardSize; i++)
+            {
+                if (grid[i, i] == null)
+                    diag1Complete = false;
+                else
+                    diagSum1 += grid[i, i].Value;
+
+                if (grid[i, boardSize - i - 1] == null)
+                    diag2Complete = false;
+                else
+                    diagSum2 += grid[i, boardSize - i - 1].Value;
+            }
+
+            return (diag1Complete && diagSum1 == magicSum) || (diag2Complete && diagSum2 == magicSum);
+        }
+
+        public static bool isBoardFull(int?[,] grid)
+        {
+            foreach (var cell in grid)
+            {
+                if (cell == null)
+                    return false;
             }
             return true;
         }
 
-        public static bool CheckFiveInARow(int?[,] board, int size, int symbol)
+        // ---------- GOMOKU GAME UTILS ----------
+
+        public static bool PlaceSymbol(char?[,] grid, int row, int col, char symbol)
+        {
+            if (row < 0 || row >= grid.GetLength(0) || col < 0 || col >= grid.GetLength(1))
+                return false;
+
+            if (grid[row, col] != null)
+                return false;
+
+            grid[row, col] = symbol;
+            return true;
+        }
+
+        public static bool CheckFiveInARow(char?[,] grid, int size, char symbol)
         {
             for (int row = 0; row < size; row++)
             {
                 for (int col = 0; col < size; col++)
                 {
-                    if (board[row, col] == symbol)
+                    if (grid[row, col] == symbol)
                     {
-                        if (CheckDirection(board, row, col, symbol, 1, 0) ||  // vertical
-                            CheckDirection(board, row, col, symbol, 0, 1) ||  // horizontal
-                            CheckDirection(board, row, col, symbol, 1, 1) ||  // diagonal /
-                            CheckDirection(board, row, col, symbol, 1, -1))   // diagonal \
+                        if (CheckDirection(grid, row, col, symbol, 1, 0) ||
+                            CheckDirection(grid, row, col, symbol, 0, 1) ||
+                            CheckDirection(grid, row, col, symbol, 1, 1) ||
+                            CheckDirection(grid, row, col, symbol, 1, -1))
                         {
                             return true;
                         }
@@ -124,23 +110,81 @@ namespace BoardGameFramework{
             return false;
         }
 
-        private static bool CheckDirection(int?[,] board, int row, int col, int symbol, int dRow, int dCol)
+        public static bool isBoardFullGomoku(char?[,] grid)
         {
-            int count = 0;
-            int size = board.GetLength(0);
+            foreach (var cell in grid)
+            {
+                if (cell == null)
+                    return false;
+            }
+            return true;
+        }
 
+        private static bool CheckDirection(char?[,] grid, int row, int col, char symbol, int dRow, int dCol)
+        {
+            int size = grid.GetLength(0);
             for (int i = 0; i < 5; i++)
             {
                 int r = row + i * dRow;
                 int c = col + i * dCol;
 
-                if (r < 0 || c < 0 || r >= size || c >= size || board[r, c] != symbol)
+                if (r < 0 || c < 0 || r >= size || c >= size || grid[r, c] != symbol)
                     return false;
-
-                count++;
             }
-
-            return count == 5;
+            return true;
         }
+
+        // ---------- NOTAKTO GAME UTILS ----------
+
+        public static bool PlaceX(bool[,] grid, int row, int col)
+        {
+            if (row < 0 || row >= 3 || col < 0 || col >= 3)
+                return false;
+
+            if (grid[row, col])
+                return false;
+
+            grid[row, col] = true;
+            return true;
+        }
+
+        public static void ClearCell(bool[,] grid, int row, int col)
+        {
+            if (row >= 0 && row < 3 && col >= 0 && col < 3)
+                grid[row, col] = false;
+        }
+
+        public static bool GetCell(bool[,] grid, int row, int col)
+        {
+            if (row < 0 || row >= 3 || col < 0 || col >= 3)
+                return false;
+
+            return grid[row, col];
+        }
+
+        public static bool HasThreeInARow(bool[,] grid)
+        {
+            for (int i = 0; i < 3; i++)
+                if (grid[i, 0] && grid[i, 1] && grid[i, 2]) return true;
+
+            for (int i = 0; i < 3; i++)
+                if (grid[0, i] && grid[1, i] && grid[2, i]) return true;
+
+            if (grid[0, 0] && grid[1, 1] && grid[2, 2]) return true;
+            if (grid[0, 2] && grid[1, 1] && grid[2, 0]) return true;
+
+            return false;
+        }
+
+        public static bool IsBoardFullNotakto(bool[,] grid)
+        {
+            foreach (var cell in grid)
+                if (!cell) return false;
+
+            return true;
+        }
+
     }
+
+    
 }

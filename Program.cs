@@ -11,9 +11,15 @@ namespace BoardGameFramework
             Console.WriteLine("Choose a game:");
             Console.WriteLine("1. Numerical Tic Tac Toe");
             Console.WriteLine("2. Gomoku");
+            Console.WriteLine("3. Notakto");
 
-            int gameChoice = int.Parse(Console.ReadLine()!);
 
+            int gameChoice;
+            while (!int.TryParse(Console.ReadLine(), out gameChoice) || gameChoice < 1 || gameChoice > 3)
+            {
+                Console.Write("Invalid input. Enter 1, 2, or 3: ");
+            }
+            
             Console.WriteLine("Do you want to load a saved game? (y/n):");
             string? loadChoice = Console.ReadLine()?.Trim().ToLower();
 
@@ -21,21 +27,49 @@ namespace BoardGameFramework
 
               if (loadChoice == "y")
             {
-                (Board board, Player player1, Player player2, Player currentPlayer) = SaveManager.LoadGame();
+                if (gameChoice == 1)
+                {
+                    var (board, player1, player2, currentPlayer) = SaveManager.LoadNumericalGame();
+                    game = new NumericalTicTacToeGame(board, player1, player2, currentPlayer);
+                }
+                else if (gameChoice == 2)
+                {
+                    var (board, player1, player2, currentPlayer) = SaveManager.LoadGomokuGame();
+                    game = new GomokuGame(board, player1, player2, currentPlayer);
+                }
+                else
+                {
+                    var (boards, player1, player2, currentPlayer) = SaveManager.LoadNotaktoGame();
+                    game = new NotaktoGame(boards, player1, player2, currentPlayer);
+                }
 
-                game = gameChoice == 2
-                    ? new GomokuGame(board, player1, player2, currentPlayer)
-                    : new NumericalTicTacToeGame(board, player1, player2, currentPlayer);
             }
             else
             {
-                game = gameChoice == 2
-                    ? new GomokuGame()
-                    : new NumericalTicTacToeGame();
+                if (gameChoice == 1)
+                    game = new NumericalTicTacToeGame();
+                else if (gameChoice == 2)
+                    game = new GomokuGame();
+                else
+                    game = new NotaktoGame();
+
             }
 
-            GameManager manager = new GameManager(game);
-            manager.Start();
+            if (gameChoice == 1)
+            {
+                NumericalGameManager numericalManager = new NumericalGameManager(game);
+                numericalManager.Start();
+            }
+            else if (gameChoice == 2)
+            {
+                GomokuGameManager gomokuManager = new GomokuGameManager(game);
+                gomokuManager.Start();
+            }
+            else
+            {
+                NotaktoGameManager notaktoManager = new NotaktoGameManager(game);
+                notaktoManager.Start();
+            }
         }
     }
 }
