@@ -133,8 +133,8 @@ namespace BoardGameFramework
         {
             using (StreamWriter writer = new StreamWriter(path))
             {
-                writer.WriteLine(currentTurn);               // player1 or player2
-                writer.WriteLine(isComputer.ToString());     // true or false
+                writer.WriteLine(currentTurn);               
+                writer.WriteLine(isComputer.ToString());     
 
                 for (int b = 0; b < boardStates.Length; b++)
                 {
