@@ -16,6 +16,8 @@ namespace BoardGameFramework{
 
         public NotaktoGame()
         {
+            Console.WriteLine("Welcome to Notakto!");
+            Console.WriteLine("Take turns placing an X on any of the 3 boards. The game ends when all 3 board have three-in-a-row, \nat which point the player to make the last move loses");
             InitializeGame();
         }
 
@@ -41,7 +43,7 @@ namespace BoardGameFramework{
             while (!int.TryParse(Console.ReadLine(), out mode) || (mode != 1 && mode != 2))
                 Console.Write("Invalid input. Enter 1 or 2: ");
 
-            Player1 = new Player("Player 1", new List<int>());
+            Player1 = new HumanPlayer("Player 1", new List<int>());
             Player2 = (mode == 2)
                 ? new NotaktoComputerPlayer("Computer", new List<int>())
                 : new Player("Player 2", new List<int>());
