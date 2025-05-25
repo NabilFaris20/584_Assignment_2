@@ -10,6 +10,8 @@ namespace BoardGameFramework
 
         public GomokuGame()
         {
+            Console.WriteLine("Welcome to Gomoku!");
+            Console.WriteLine("Take turns placing your symbol on the board — first to get five in a row wins.");
             InitializeGame();
         }
 
@@ -32,7 +34,7 @@ namespace BoardGameFramework
 
         private void InitializeGame()
         {
-            BoardSize = Board.BoardSize();
+            BoardSize = 15;
             GameBoard = new GomokuBoard(BoardSize);
 
             Console.WriteLine("Choose game mode:");

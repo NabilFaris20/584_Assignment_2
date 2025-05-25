@@ -10,6 +10,8 @@ namespace BoardGameFramework
 
         public NumericalTicTacToeGame()
         {
+            Console.WriteLine("Welcome to Numerical Tic Tac Toe!");
+            Console.WriteLine("Take turns placing odd/even numbers to form a row, column, or diagonal that adds up to the magic sum.");
             InitializeGame();
         }
 
