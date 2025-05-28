@@ -232,11 +232,10 @@ namespace BoardGameFramework
                 int row, col;
                 char symbol = ((SymbolPlayer)game.CurrentPlayer).Symbol;
 
-                // Check if it's the computer's turn
                 if (game.CurrentPlayer is GomokuComputerPlayer computer)
                 {
                     Console.WriteLine($"{computer.Name} ({symbol}) is thinking...");
-                    Thread.Sleep(800);  // optional: add a short delay for realism
+                    Thread.Sleep(800);  
 
                     (row, col) = computer.MakeMove(board.Grid, game.BoardSize);
                     Console.WriteLine($"Computer placed at ({row}, {col})");
@@ -345,10 +344,10 @@ namespace BoardGameFramework
 
                     GameUtils.PlaceX(notaktoGame.Boards[board].Grid, row, col);
 
-                    undoStack.Push(new Move(row, col, 1, game.CurrentPlayer) { BoardIndex = board }); // ✅ FIXED
+                    undoStack.Push(new Move(row, col, 1, game.CurrentPlayer) { BoardIndex = board }); 
                     redoStack.Clear();
 
-                    game.CurrentPlayer = game.Player1; // ✅ switch back to human
+                    game.CurrentPlayer = game.Player1; 
                     continue;
                 }
                 else
@@ -407,7 +406,7 @@ namespace BoardGameFramework
                 bool placed = GameUtils.PlaceX(notaktoGame.Boards[board].Grid, row, col);
                 if (placed)
                 {
-                    undoStack.Push(new Move(row, col, 1, game.CurrentPlayer) { BoardIndex = board }); // ✅ Push into stack
+                    undoStack.Push(new Move(row, col, 1, game.CurrentPlayer) { BoardIndex = board }); 
                     redoStack.Clear();
 
                     game.CurrentPlayer = game.CurrentPlayer == game.Player1 ? game.Player2 : game.Player1;

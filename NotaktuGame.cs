@@ -11,7 +11,7 @@ namespace BoardGameFramework{
 
         // --- IGame interface compatibility ---
         public int BoardSize => 3;
-        public Board GameBoard => new NotaktoMultiBoard(Boards); // ✅ Use an inline subclass
+        public Board GameBoard => new NotaktoMultiBoard(Boards);  
         public void DisplayMagicSum() { }
 
         public NotaktoGame()
@@ -84,7 +84,7 @@ namespace BoardGameFramework{
 
             for (int i = 0; i < boards.Length; i++)
             {
-                Console.Write($"Board {i}".PadRight(10)); // Ensures even board titles
+                Console.Write($"Board {i}".PadRight(10)); 
             }
             Console.WriteLine();
 
@@ -96,7 +96,7 @@ namespace BoardGameFramework{
                     {
                         Console.Write((boards[b].Grid[row, col] ? "X" : "_").PadRight(3));
                     }
-                    Console.Write("   "); // Space between boards
+                    Console.Write("   "); 
                 }
                 Console.WriteLine();
             }

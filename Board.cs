@@ -56,7 +56,7 @@ namespace BoardGameFramework
     {
         public char?[,] Grid { get; private set; }
 
-        public GomokuBoard(int size) : base(3)
+        public GomokuBoard(int size) : base(size)
         {
             Grid = new char?[size, size];
         }
